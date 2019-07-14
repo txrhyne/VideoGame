@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+<style>
+
+canvas {
+  border: 1px solid black;
+}
+</style>
+
+
+</head>
+
+<body>
+  <div style="position: relative;">
+    <canvas id="canvase" width="450" height="240" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
+    <canvas id="canvas" width="450" height="240" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+    <canvas id='canvasb' width = '450' height ='240' style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+  </div>
+
+<script>
+let img = new Image();
+img.src = 'adventurer-Sheet.png'
+let enemyimg = new Image();
+enemyimg.src = 'enemy.png'
+let background = new Image();
+background.src = 'beastlands.png'
+//leftcorner155240
+//rightcorner
+let bgx = 155;
+let bgy = 240;
+let bgdx = 320;
+let bgdy = 160;
+let cx = 0;
+let cy = 0
+
+
+const potentialnames = ['jim' ,'bob' , 'tanjeem', 'adam', 'ashik', 'mitch', 'dean', 'tripleh']
+background.onload = function() {
+  //ctx2.drawImage(background,bgx,bgy,bgdx,bgdy,0,0,450,240);
+  init();
+//  console.log('firsttime')
+};
+
+
+let canvas = document.querySelector('canvas');
+let canvasb = document.getElementById('canvasb');
+let ctx = canvas.getContext('2d');
+let ctx2 = canvasb.getContext('2d');
+let ctx3 = canvase.getContext('2d')
+let dy = 0
+
+const scale = 1;
+const width = 50;
+const ewidth = 32
+const height = 37;
+const eheight = 32;
+const scaledWidth = scale*width
+const scaledHeight = scale*height
+
+function drawFrame(frameX, frameY, canvasX, canvasY) {
+  ctx.drawImage(img,
+                frameX * width, frameY * height, width, height,
+                canvasX, 204, scaledWidth, scaledHeight);
+
+}
+
+
+
+class Enemy {
+  draw(frameX,frameY,canvasX,canvasY) {ctx.drawImage(enemyimg,frameX * 32, frameY * 32, 32, 32,
+                canvasX, canvasY, 32, 32) }
+
+  }
+
+
+
+
+
+document.onkeydown = doKeyDown;
+document.onkeyup = doKeyUp;
+state = 'standing'
+function doKeyDown(e) {
+
+	e = e || window.event;
+
+    if (e.keyCode == '38') {
+        state = 'jumping'
+		//console.log('this is the',state)
+    }
+    else if (e.keyCode == '40') {
+        state = 'crouching'
+		//console.log('this is the',state)
+    }
+    else if (e.keyCode == '37') {
+		state = 'runningbackward'
+		//console.log('this is the',state)
+    }
+    else if (e.keyCode == '39') {
+		state = 'runningforward'
+		//console.log('this is the',state)
+    }
+	else if(e.keyCode == '32') {
+		state = 'punching'
+		//console.log('this is the', state)
+	}
+
+}
+
+function doKeyUp(e) {
+	e = e || window.event;
+
+    if (e.keyCode == '38') {
+        state = 'standing'
+    }
+    else if (e.keyCode == '40') {
+        state = 'standing'
+    }
+    else if (e.keyCode == '37') {
+		state = 'standing'
+    }
+    else if (e.keyCode == '39') {
+		state = 'standing'
+    }
+	else if(e.keyCode == '32') {
+		state = 'standing'
+	}
+
+}
+
+const Loops = [[1, 2, 3,4,5,6],[1, 2, 3],[5,5]]
+const EnemyLoops = [1,2,3]
+var cycleLoop = [1, 2, 3,4,5,6];
+const runloop  = [1,2,3,4,5,6]
+const standing = [1, 2, 3]
+let currentLoopIndex = 0;
+let enemyLoopIndex = 0;
+let frameCount = 0;
+var canvx = 0;
+var ex = canvx + 15
+var row = 7
+var erow = 0
+var xxx = 50
+var enemycontainer = Array(4)
+var count = 1
+
+for (i =0;i< enemycontainer.length; i++) {
+  enemycontainer[i] = new Enemy
+  enemycontainer[i].xloc = xxx
+  enemycontainer[i].health = 100
+  enemycontainer[i].status = 'alive'
+
+
+  xxx = xxx + 40
+  }
+
+
+
+
+
+xxxorig = 50
+
+
+function step() {
+  ctx2.drawImage(background,bgx,bgy,bgdx,bgdy,0,0,450,240);
+
+  if ( canvx>460)
+  {
+    bgx = 470
+    bgy = 270
+    bgdx = 250
+    bgdy = 110
+    canvx = 0
+    count = count + 1
+    for (i =0;i< enemycontainer.length; i++) {
+      enemycontainer[i] = new Enemy
+      enemycontainer[i].xloc = xxx
+      enemycontainer[i].health = 100
+      enemycontainer[i].status = 'alive'
+      xxx = xxx + 40
+
+      }
+
+
+  }
+  if (count==3)
+  {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "30px Arial";
+    img.src = 'lol'
+    enemyimg.src = 'lol'
+    //background.src = 'lol'
+    ctx2.fillRect(0, 0, 470, 470);
+
+    ctx2.stroke();
+    ctx3.fillStyle = "red";
+
+    ctx3.font = '50px arial ';
+    ctx3.fillText('Congrats', canvas.width/4+20, 120);
+
+
+  }
+
+  if (currentLoopIndex >= cycleLoop.length) {
+    currentLoopIndex = 0;
+  }
+  frameCount++;
+  if (frameCount < 7) {
+    window.requestAnimationFrame(step);
+    return;
+  }
+  frameCount = 0;
+  if(count<3){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  }
+  drawFrame(cycleLoop[currentLoopIndex], row, canvx, 0);
+  //if (cycleLoop[currentLoopIndex] == 'undefined') {
+  console.log(state,cycleLoop[currentLoopIndex],cycleLoop,currentLoopIndex)
+
+  //}
+
+
+  for (i =0;i< enemycontainer.length; i++) {
+    if (enemycontainer[i].status == 'alive') {
+    enemycontainer[i].draw(EnemyLoops[enemyLoopIndex],erow,enemycontainer[i].xloc,208)
+  }
+    else if (enemycontainer[i].status == 'dead')
+    {
+    }
+    enemycontainer[i].xloc --
+
+
+  }
+
+  function hello () {
+    if (state == 'punching')
+    {
+      for (i =0;i< enemycontainer.length; i++) {
+        if ((Math.abs(enemycontainer[i].xloc - canvx))<30) {
+        enemycontainer[i].health = enemycontainer[i].health - 40
+        }
+        if (enemycontainer[i].health<0){
+          enemycontainer[i].status = 'dead'
+        }
+      }
+    }
+  }
+
+  hello()
+
+  currentLoopIndex++;
+  enemyLoopIndex++;
+
+
+  if (enemyLoopIndex >= EnemyLoops.length) {
+	enemyLoopIndex = 0 }
+
+  if (state == 'runningforward') {
+	canvx = canvx + 15
+	row = 1
+	cycleLoop = Loops[0]
+
+	//console.log(state,row)
+	}
+
+	  else if(state == 'runningbackward') {
+	canvx = canvx - 15
+	row = 1
+	cycleLoop = Loops[0]
+
+  }
+
+	else if(state == 'crouching') {
+	row = 0
+	cycleLoop = Loops[2]
+
+  }
+
+	else if(state == 'punching') {
+	row = 6
+	cycleLoop = Loops[0]
+  //console.log(EnemyLoops,enemycontainer[0].draw)
+	}
+
+  else if (state == 'standing') {
+	 row = 0
+	 cycleLoop = Loops[1]
+
+	// console.log('transition')
+	}
+
+  window.requestAnimationFrame(step);
+
+
+
+}
+
+
+
+function init() {
+  window.requestAnimationFrame(step);
+
+}
+
+</script>
+
+</body>
+</html>
